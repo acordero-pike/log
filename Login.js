@@ -1,0 +1,66 @@
+/*
+    Desarrollador: Rogelio Raúl Castañeda Flores
+*/
+
+const URL = `https://172.30.236.13:8082/api/Usuarios/SignIn`;const emailInput = document.getElementById("inputEmail");
+const passwordInput = document.getElementById("inputPassword");
+const form = document.getElementById('signin-form');
+const alerta = document.querySelector('#alert');
+
+function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
+
+let cantidadCorreos;
+
+const signIn = async (e) => {
+    e.preventDefault()
+     
+    try {
+        const response = await fetch(URL, {
+            headers: {
+                'Accept': "application/json, text/plain",
+                'Content-Type': "application/json;charset=UTF-8"
+            }, method: 'POST', mode:'no-cors', body: {
+                email: emailInput.value,
+                clave: passwordInput.value,
+            },
+        });
+        const data = await response.text();
+        emailInput.value = '';
+        passwordInput.value = '';
+         
+        Cookies.set('jwt', data);
+        const stringJWT = Cookies.get('jwt');
+        let jwt;
+
+        if (stringJWT) {
+            jwt = parseJwt(stringJWT);
+        }
+
+        if (stringJWT == "") {
+            alerta.textContent = "Datos Incorrectos"
+            alerta.style.display = 'block';
+            setTimeout(() => {
+                alerta.style.display = 'none';
+            }, 3000);
+            e.preventDefault()
+        } else {
+            if (jwt.rol == "administrador") {
+                window.location.href = "./MenuPrincipa-Admin/index.html";
+            } else if (jwt.rol == "desarrollador") {
+                window.location.href = "./MenuPrincipal/Menu.html";
+            }
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+form.addEventListener('submit', signIn)
