@@ -21,16 +21,16 @@ let cantidadCorreos;
 
 const signIn = async (e) => {
     e.preventDefault()
-     const body = {
-                email: emailInput.value,
-                clave: passwordInput.value,
-            };
+    const body = JSON.stringify({
+        email: emailInput.value,
+        clave: passwordInput.value,
+    })
     try {
         const response = await fetch(URL, {
             headers: {
-                'Accept': "application/json, text/plain",
-                'Content-Type': "application/json;charset=UTF-8"
-            }, method: 'POST', body: JSON.stringify(body),
+                'Accept': "application/json, text/plain, */*",
+                'Content-Type': "application/json;charset=utf-8"
+            }, method: 'POST', body
         });
         const data = await response.text();
         emailInput.value = '';
