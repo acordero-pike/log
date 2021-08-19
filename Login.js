@@ -27,7 +27,7 @@ const signIn = async (e) => {
             headers: {
                 'Accept': "application/json, text/plain",
                 'Content-Type': "application/json;charset=UTF-8"
-            }, method: 'POST', mode:'no-cors', body: {
+            }, method: 'POST', body: {
                 email: emailInput.value,
                 clave: passwordInput.value,
             },
